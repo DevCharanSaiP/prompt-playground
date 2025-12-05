@@ -66,10 +66,3 @@ If you want a UI switch to toggle light/dark manually, I can add a small button 
 - To change the model or inference settings, edit `client = InferenceClient(...)` and the `client.chat_completion(...)` call in `app.py`.
 
 ---
-
-If you'd like, I can also:
-- Add a manual theme toggle in the UI
-- Add a `--share` option to `demo.launch()` for quick remote sharing
-- Add a simple test harness that exercises `generate_variants()` with canned inputs
-
-Enjoy — want me to add the manual theme toggle now?
