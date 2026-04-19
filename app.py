@@ -27,16 +27,29 @@ def generate_variants(base_prompt, use_case, examples, test_input):
     
     # Test each variant
     results = {}
+    temperature_map = {
+        "Zero-Shot": 0.7,
+        "Few-Shot": 0.6,
+        "Chain-of-Thought": 0.9,
+        "Role-Based": 0.8,
+        "Structured Output": 0.5,
+        "Reverse Prompting": 1.0,
+        "Socratic Method": 0.95,
+    }
     for variant_name, variant_prompt in variants.items():
         full_prompt = f"{variant_prompt}\n\nTest Input: {test_input}"
         
-        messages = [{"role": "user", "content": full_prompt}]
+        messages = [
+            {"role": "system", "content": f"You are using the {variant_name} prompting strategy."},
+            {"role": "user", "content": full_prompt},
+        ]
         
         try:
             response = client.chat_completion(
                 messages=messages,
                 max_tokens=300,
-                temperature=0.8,
+                temperature=temperature_map.get(variant_name, 0.8),
+                stop=["\n\n"] if variant_name == "Structured Output" else None,
             )
             results[variant_name] = response.choices[0].message["content"].strip()
         except Exception as e:
@@ -46,7 +59,7 @@ def generate_variants(base_prompt, use_case, examples, test_input):
     variants_md = "## 📊 7 Prompt Variants\n\n"
     for i, (name, output) in enumerate(results.items(), 1):
         variants_md += f"### {i}. {name}\n"
-        variants_md += f"``````\n\n"
+        variants_md += f"```\n{output}\n```\n\n"
     
     # Build comparison table
     comparison_md = "## 📈 Performance Comparison\n\n"
@@ -69,12 +82,9 @@ def generate_variants(base_prompt, use_case, examples, test_input):
     
     # Auto-optimized version
     optimized = f"""## 🚀 Auto-Optimized Version
-
 Based on your use case (**{use_case}**), here's the recommended optimized prompt:
 {get_prompt_variants(base_prompt, use_case, examples)['Chain-of-Thought']}
-
-Test Input: {test_input}
-
+full_prompt = f"{variant_prompt}\n\nInput:\n{test_input}"
 **Why this works:**
 - Combines structured thinking with clarity
 - Encourages step-by-step reasoning
