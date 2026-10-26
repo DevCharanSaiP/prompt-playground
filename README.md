@@ -1,4 +1,4 @@
-# PromptLab — Prompt Engineering Playground
+# PromptLab - Prompt Engineering Playground
 
 A Streamlit app to generate, test, compare, and refine prompts using seven patterns. It uses Gemini through `google-genai`.
 
